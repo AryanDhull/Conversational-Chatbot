@@ -1,4 +1,4 @@
-nmt-chatbot
+Conversational-Chatbot
 ===================
 
 Table of Contents
@@ -13,19 +13,14 @@ Table of Contents
 8. [Utils](#utils)
 9. [Inference](#inference)
 10. [Importing nmt-chatbot](#importing-nmt-chatbot)
-11. [Deploying chatbot/model](#deploying-chatbotmodel)
-12. [Demo chatbot](#demo-chatbot)
-13. [Changelog](#changelog)
 
 Introduction
 -------------
 
-nmt-chatbot is the implementation of chatbot using NMT - Neural Machine Translation (seq2seq). Includes BPE/WPM-like tokenizator (own implementation). Main purpose of that project is to make an NMT chatbot, but it's fully compatible with NMT and still can be used for sentence translations between two languages.
+Conversational-Chatbot is the implementation of chatbot using NMT - Neural Machine Translation (seq2seq). Includes BPE/WPM-like tokenizator (own implementation). Main purpose of that project is to make an NMT chatbot, but it's fully compatible with NMT and still can be used for sentence translations between two languages.
 
-The code is built on top of NMT but because of lack of available interfaces, some things are "hacked", and parts of the code had to be copied into that project (and will have to be maintained to follow changes in NMT).
 
-This project forks NMT. We had to make a change in our code allowing the use of a stable TensorFlow (1.4) version. Doing so allowed us also to fix some bug before official patch as well as do couple of necessary changes.
-
+This project forks NMT. We had to make a change in our code allowing the use of a stable TensorFlow (1.4) version.
 
 
 Setup
@@ -36,9 +31,9 @@ It is *highly* recommended that you use Python 3.6+. Python 3.4 and 3.5 is likel
 
 If you want to use exactly what's in tutorial made by Sentdex, use v0.1 tag. There are multiple changes after last part of tutorial.
 
- 1. ```$ git clone --recursive https://github.com/daniel-kukiela/nmt-chatbot```  
+ 1. ```$ git clone --recursive https://github.com/AryanDhull/Conversational-Chatbot/```  
     (or)  
-    ```$ git clone --branch v0.1 --recursive https://github.com/daniel-kukiela/nmt-chatbot.git``` (for a version featured in Sentdex tutorial)
+    ```$ git clone --branch v0.1 --recursive https://github.com/AryanDhull/Conversational-Chatbot/``` (for a version featured in Sentdex tutorial)
  2. ```$ cd nmt-chatbot```
  3. ```$ pip install -r requirements.txt``` TensorFlow-GPU is one of the requirements. You also need CUDA Toolkit 8.0 and cuDNN 6.1. (Windows tutorial: https://www.youtube.com/watch?v=r7-WPbx8VuY  Linux tutorial: https://pythonprogramming.net/how-to-cuda-gpu-tensorflow-deep-learning-tutorial/)
  4. ```$ cd setup```
@@ -50,26 +45,6 @@ If you want to use exactly what's in tutorial made by Sentdex, use v0.1 tag. The
  10. ```$ python train.py``` Begin training
 
 Version 0.3 introduces epoch-based training including custom (epoch-based as well) decaying scheme - refer to `preprocessing['epochs']` in `setup/settings.py` for more detailed explanation and example (enabled by default).
-
-
-
-Custom summary values (evaluation)
-----------------------------------
-
-It is possible to add custom values logged into model logs. TensorBoard will plot those values in a separate graphs.
-
-To add custom values, modify `custom_summary` function inside `setup/custom_summary.py`.
-
-Data object is a list of tuples, where tuple contains:
-- source phrase
-- target phrase
-- nmt phrase
-
-Return must be a dictionary, where:
-- key - lowercase ascii letters only plus underscore
-- value - float value
-
-Function is called on every evaluation. As a result returned values will be saved in model logs and plot in TensorBoard.
 
 
 Standard vs BPE/WPM-like (subword) tokenization, embedded detokenizer
@@ -230,64 +205,3 @@ With a list of questions, the function will return a list of dictionaries.
 For every empty question, the function will return `None` instead of result dictionary.
 
 
-
-Deploying chatbot/model
------------------------
-
-Whether model is trained, there might be a need to export only files necessary for interference (for example to be embeded and imported it other project).
-
-That might be achieved automatically by using `prepare_for_deployment` utility:
-
-    cd utils
-    python prepare_for_deployment.py
-
-Script will create `_deployment` folder inside project's root directory and copy all necessary files depending on your current settings.
-
-
-
-Demo chatbot
-------------
-
-We have trained demo model. It's deployment-ready package.
-
-As it's a demo model, it was trained on small data-set (corpus) of one million pairs and using relatively small neural network. It is not a decent model, but good enough to try it and see how it's working.
-
-You can download package [here](https://www.dropbox.com/s/2w4i77fancf4voc/nmt_chatbot.zip?dl=0). It includes all but also only necessary files to run inference (doesn't include training corpus for example). All model settings can be found in `setup/setting.py` file.
-
-
-Changelog
----------
-
-### Master
-- New response scoring engine (work in progress, suggestions and code improvements are welcome)
-- Showing score modifiers in 'live' inference mode
-- Fixed 'learning bpe' stage of 'prepare_data' speed issue (it's multiple times faster now)
-- Improved 'prepare training set' stage of 'prepare_data' speed (should run about 1/3rd faster)
-- Fixed model paths - pathhs are relative now, so model can be easily moved between different paths or even machines
-- Fixed info about importing project as a module
-- Updated README
-- Added changelog
-- Added table of contents
-- Added passing checkpoint name as a parameter for inference
-- Added deployment script
-- Added ability to cache some `prepare_data` common steps for multiple script run
-- Added epoch-based training
-- Added custom decaying scheme (epoch-based)
-- Added ability to return own evaluation values (will be plotted in TensorBoard)
-- Updated `NMT` fork (fixed `train_ppl` graph, added evaluation outputs saved to a separate files, added ability to pass custom evaluation callback function)
-- Merged latest `NMT` changes into our fork
-- Various fixes and other small improvements
-
-### v0.2
-- BPE/WPM-like tokenizer
-- Updated NMT
-- Enabled NMT's SMP detokenizer with our embedded BPE/WPM-like tokenizer
-- Fixed issue with paths on Linux and MacOS machines
-- Improved pair testing utility
-- Fixed command for tag cloning
-- Various fixes and other small improvements, improved readme file
-
-### v0.1
-- Initial commit, code for tutorial: https://pythonprogramming.net/chatbot-deep-learning-python-tensorflow/
-
-----------
